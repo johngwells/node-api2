@@ -6,14 +6,19 @@ const router = express.Router();
 
 // Creates a post using the info sent inside the request body
 router.post("/", (req, res) => {
-  console.log(req.body);
+  const body = req.body;
+
+  if (!body.title || !body.contents) {
+    res.status(400).json({ error: 'Please provide title & contents for the post' });
+  }
+
   db.insert(req.body)
     .then(post => {
       console.log(post);
       res.status(201).json(post);
     })
     .catch(error => {
-      res.status(500).json({ error: "Error adding post" });
+      res.status(500).json({ error: "Error saving post to database" });
     });
 });
 
@@ -22,6 +27,8 @@ router.post("/", (req, res) => {
 router.post("/:id/comments", (req, res) => {
   const id = req.params.id;
   const comment = { ...req.body, post_id: id };
+
+  !comment && res.status(400).json({ error: ' Provide title & content for the post' });
 
   db.findById(id).then(post => {
     post.length
