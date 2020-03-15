@@ -50,6 +50,26 @@ router.get("/", (req, res) => {
     });
 });
 
+// return post with specified ID
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.findById(id).then(postId => {
+    postId.length
+      ? res.status(200).json(postId)
+      : res
+          .status(404)
+          .json({
+            error: "The post with specified ID does not exist"
+          })
+          .catch(error => {
+            res
+              .status(500)
+              .json({ error: `Post with ${postId} does not exist` });
+          });
+  });
+});
+
 // returns an array of all comment objects with the post specified ID
 router.get("/:id/comments", (req, res) => {
   const id = req.params.id;
@@ -68,5 +88,17 @@ router.get("/:id/comments", (req, res) => {
         .json({ error: "The comment information could not be retrieved" });
     });
 });
+
+// Removes the post with the specified ID and returns the ***deleted post object***
+router.delete("/:id", (req, res) => {
+
+});
+
+// Updates the post with the specified ID using data from the 'request body'. 
+// Return the modified document ***NOT the original***
+router.put("/:id", (req, res) => {
+
+});
+
 
 module.exports = router;
