@@ -91,7 +91,17 @@ router.get("/:id/comments", (req, res) => {
 
 // Removes the post with the specified ID and returns the ***deleted post object***
 router.delete("/:id", (req, res) => {
+  const id = req.params.id;
 
+  db.remove(id)
+    .then(deleted => {
+      deleted > 0
+      ? res.status(200).json(deleted)
+      : res.status(404).json({ message: 'the post with the specified ID could not be deleted'})
+    })
+    .catch(error => {
+      res.status(500).json({ error: 'error deleting post' });
+    })
 });
 
 // Updates the post with the specified ID using data from the 'request body'. 
