@@ -117,6 +117,10 @@ router.put("/:id", (req, res) => {
   const id = req.params.id;
   const updated = req.body;
 
+  if (!updated.title || !updated.contents) {
+    res.status(400).json({ error: 'Please provide title & contents' });
+  }
+
   db.update(id, updated)
     .then(update => {
       update > 0 ?
