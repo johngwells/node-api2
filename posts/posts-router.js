@@ -21,20 +21,20 @@ router.post("/", (req, res) => {
 // using info sent inside the request body
 router.post("/:id/comments", (req, res) => {
   const id = req.params.id;
-  const comment = {...req.body, post_id: id}
+  const comment = { ...req.body, post_id: id };
 
-  db.findById(id)
-    .then(post => {
-      post.length ?
-        db.insertComment(comment)
+  db.findById(id).then(post => {
+    post.length
+      ? db
+          .insertComment(comment)
           .then(data => res.status(201).json(comment))
           .catch(err => {
             res.status(500).json({
-              error: 'Error saving comment to post'
-            })
+              error: "Error saving comment to post"
+            });
           })
-      : res.status(400).json({ 
-        message: 'The post with the specified ID does not exist'
+      : res.status(400).json({
+          message: "The post with the specified ID does not exist"
         });
   });
 });
@@ -47,6 +47,25 @@ router.get("/", (req, res) => {
     })
     .catch(error => {
       res.status(500).json({ error: "error retrieving all posts" });
+    });
+});
+
+// returns an array of all comment objects with the post specified ID
+router.get("/:id/comments", (req, res) => {
+  const id = req.params.id;
+
+  db.findPostComments(id)
+    .then(comments => {
+      comments.length
+        ? res.status(200).json(comments)
+        : res.status(404).json({
+            error: "Commnents with the specified post ID does not exist"
+          });
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json({ error: "The comment information could not be retrieved" });
     });
 });
 
